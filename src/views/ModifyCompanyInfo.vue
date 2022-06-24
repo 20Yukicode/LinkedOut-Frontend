@@ -75,10 +75,10 @@ import UserIcon from '@/components/UserIcon';
 import PageFooter from '@/components/PageFooter';
 import Vditor from 'vditor';
 import '@/assets/vditor.css';
-import { 
-  upLoadUserImage, upLoadUserBackground,
-  getEnterpriseInfo, updateEnterpriseInfo 
+import {
+  getEnterpriseInfo, updateEnterpriseInfo
 } from '@/apis/users.js';
+import {toFormData} from "@/utils/utils";
 
 export default {
   components: {
@@ -99,8 +99,8 @@ export default {
       briefInfo: data.briefInfo,
       description: data.description
     }
-    this.userIconUrl = data.pictureUrl;
-    this.backgroundUrl = data.background;
+    this.userIconUrl = data.avatar;
+    this.backgroundUrl = data.back;
     
     // 编辑器
     this.vditor = new Vditor('vditor', {
@@ -123,34 +123,35 @@ export default {
     uploadAvatar: async function(file) { // 上传头像
       let params = new FormData();
       params.append('unifiedId', this.userBasicData.unifiedId);
-      params.append('file', file.raw, file.name);
+      params.append('avatar', file.raw, file.name);
       
-      const resp1 = await upLoadUserImage(params);
-      if (resp1.status == 200 && resp1.data.code == 'success') {
+      const resp1 = await updateEnterpriseInfo(params);
+      if (resp1.status === 200 && resp1.data.code ===200) {
         this.$message.success('上传成功!');
         const uid = localStorage.getItem('unifiedId');
         const resp2 = await getEnterpriseInfo({ uid: uid, sid: uid }); // 得到新头像url
-        this.userIconUrl = resp2.data.data.pictureUrl;
+        this.userIconUrl = resp2.data.data.avatar;
       }
       else this.$message.error('上传失败!');
     },
     uploadBackground: async function(file) { // 上传背景图
       let params = new FormData();
       params.append('unifiedId', this.userBasicData.unifiedId);
-      params.append('file', file.raw, file.name);
+      params.append('back', file.raw, file.name);
       
-      const resp1 = await upLoadUserBackground(params);
-      if (resp1.status == 200 && resp1.data.code == 'success') {
+      const resp1 = await updateEnterpriseInfo(params);
+      if (resp1.status === 200 && resp1.data.code ===200) {
         this.$message.success('上传成功!');
         const uid = localStorage.getItem('unifiedId');
         const resp2 = await getEnterpriseInfo({ uid: uid, sid: uid }); // 得到新背景图url
-        this.backgroundUrl = resp2.data.data.background;
+        this.backgroundUrl = resp2.data.data.back;
       }
       else this.$message.error('上传失败!');
     },
     submitBasicInfo: async function() { // 提交基本信息
-      const resp = await updateEnterpriseInfo(this.userBasicData);
-      if (resp.status == 200 && resp.data.code == 'success') this.$message.success('保存成功!');
+      const formData1=toFormData(this.userBasicData)
+      const resp = await updateEnterpriseInfo(formData1);
+      if (resp.status === 200 && resp.data.code === 200) this.$message.success('保存成功!');
       else this.$message.error('保存失败!');
     },
   }

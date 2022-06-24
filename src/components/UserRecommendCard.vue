@@ -23,7 +23,7 @@
 <script>
 import UserBriefDisp from '@/components/UserBriefDisp.vue';
 import PageFooter from './PageFooter.vue';
-import { getRecommentList } from '@/apis/tweet.js';
+import {getRecommendList} from "@/apis/users";
 
 export default {
   components: { 
@@ -52,7 +52,7 @@ export default {
     const unifiedId = localStorage.getItem("unifiedId");
     try{
       this.userRecommendList = [];
-      const resp = await getRecommentList(unifiedId);
+      const resp = await getRecommendList({"unifiedId":unifiedId});
       const recommendList = resp.data.data;
       
       for(let item of recommendList) {
@@ -61,7 +61,7 @@ export default {
           userName: item.trueName || '匿名用户',
           userBriefInfo: item.briefInfo || '',
           userType: item.userType,
-          userIconUrl: item.pictureUrl,
+          userIconUrl: item.avatar,
           ifFollowing: false,
           ifShowFollow: true
         });

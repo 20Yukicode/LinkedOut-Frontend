@@ -3,17 +3,6 @@
 # Linked Out  职业发展社交平台
 
 ## 项目简介
-
-同济大学软件工程软件工程、SOA与微服务、软件管理与经济、软件测试等课程项目（2021-2022）
-
-项目架构：Vue + Spring Boot
-
-项目访问：[Link](http://121.5.68.218:8089/)
-
-本仓库仅包括前端代码部分，后端代码详见[ww67652/SOA](https://github.com/ww67652/SOA)
-
-用例规约，详细构件设计，API文档，部署架构等详见[文档](https://github.com/LinzhouLi/LinkedOut-Frontend/tree/main/doc)
-
 ## 项目主要页面展示
 
 ### 用户/企业模块

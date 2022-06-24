@@ -119,7 +119,7 @@ export default {
           unifiedId: localStorage.getItem('unifiedId'),
           jobId: this.recruitmentId
         });
-        if (resp.status == 200 && resp.data.code == 'success') {
+        if (resp.status === 200 && resp.data.code === 200) {
           this.$message.success('删除成功!');
           this.$emit('updateAfterDel');
         }

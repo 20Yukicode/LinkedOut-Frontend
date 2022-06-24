@@ -88,11 +88,11 @@ export default {
     const recruitmentData = resp3.data.data.slice(0,6);
     for (let item of recruitmentData) {
       this.recruitmentList.push({
-        recruitmentId: item.jobId,
-        userId: item.unifiedId,
-        userIconUrl: item.pictureUrl,
-        recruitmentTitle: item.jobName,
-        recruitmentType: item.positionType
+        recruitmentId: item.position.id,
+        userId: item.userDto.unifiedId,
+        userIconUrl: item.userDto.pictureUrl,
+        recruitmentTitle: item.position.jobName,
+        recruitmentType: item.position.positionType
       })
     }
   },

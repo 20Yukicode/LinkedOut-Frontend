@@ -105,7 +105,7 @@ export default {
       
       try {
         const resp = await userRegister(params);
-        if (resp.status == 200 && resp.data.code == 'success') {
+        if (resp.status === 200 && resp.data.code ===200) {
           this.$message.success('注册成功!');
           this.$router.push('/login');
         }
@@ -132,8 +132,8 @@ export default {
       this.loadingCode = true;
 
       try {
-        const resp = await getEmailCode({ mail: this.model.email });
-        if (resp.status == 200 && resp.data.code == 'success') {
+        const resp = await getEmailCode({ email: this.model.email });
+        if (resp.status === 200 && resp.data.code ===200) {
           this.validateCode = resp.data.data;
           this.$message.success('成功发送验证码!');
         }

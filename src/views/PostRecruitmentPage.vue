@@ -166,7 +166,7 @@ export default {
             description: this.form.details
           };
           const resp = await addPosition(params);
-          if (resp.status == 200 && resp.data.code == 'success') {
+          if (resp.status === 200 && resp.data.code ===200) {
             this.$message.success('发布成功!');
             this.$router.push('/home');
           }

@@ -97,18 +97,19 @@ export default {
       const resp = await getRecommendPositions(params);
       
       const recruitmentsData  = resp.data.data;
+      console.log(recruitmentsData)
       for (let item of recruitmentsData) {
         this.recruitmentList.push({
-          recruitmentId: item.jobId,
-          unifiedId: item.unifiedId,
-          userName: item.trueName,
-          userType: item.userType,
-          userIconUrl: item.pictureUrl,
-          userBriefInfo: item.briefInfo,
-          recruitmentTitle: item.jobName,
-          recruitmentType: item.positionType,
-          salary: item.reward,
-          recordTime: item.recordTime
+          recruitmentId: item.position.id,
+          unifiedId: item.userDto.unifiedId,
+          userName: item.userDto.trueName,
+          userType: item.userDto.userType,
+          userIconUrl: item.userDto.pictureUrl,
+          userBriefInfo: item.userDto.briefInfo,
+          recruitmentTitle: item.position.jobName,
+          recruitmentType: item.position.positionType,
+          salary: item.position.reward,
+          recordTime: item.position.createTime
         });
       }
       if (this.recruitmentList.length == 0) this.loadAll == true; // 相当于加载结束
@@ -132,16 +133,16 @@ export default {
 
       for (let item of recruitmentData) {
         this.recruitmentList.push({
-          recruitmentId: item.jobId,
-          unifiedId: item.unifiedId,
-          userName: item.trueName,
-          userType: item.userType,
-          userIconUrl: item.pictureUrl,
-          userBriefInfo: item.briefInfo,
-          recruitmentTitle: item.jobName,
-          recruitmentType: item.positionType,
-          salary: item.reward,
-          recordTime: item.recordTime
+          recruitmentId: item.position.id,
+          unifiedId: item.userDto.unifiedId,
+          userName: item.userDto.trueName,
+          userType: item.userDto.userType,
+          userIconUrl: item.userDto.pictureUrl,
+          userBriefInfo: item.userDto.briefInfo,
+          recruitmentTitle: item.position.jobName,
+          recruitmentType: item.position.positionType,
+          salary: item.position.reward,
+          recordTime: item.position.createTime
         })
       }
 

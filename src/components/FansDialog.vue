@@ -16,10 +16,10 @@
 </template>
 
 <script>
-import { getFansList } from '@/apis/tweet.js';
 import { dialogWidth } from '@/utils/utils.js';
 
 import UserBriefDisp from './UserBriefDisp.vue'
+import {getFansList} from "@/apis/users";
 export default {
   components: { UserBriefDisp },
   props: {
@@ -33,7 +33,7 @@ export default {
     }
   },
   created: async function() {
-    const resp = await getFansList(this.unifiedId);
+    const resp = await getFansList({"unifiedId":this.unifiedId});
     const userData = resp.data.data;
     for(let item of userData) {
       this.userList.push({
@@ -41,7 +41,7 @@ export default {
         userName: item.trueName || '匿名用户',
         userBriefInfo: item.briefInfo || '',
         userType: item.userType,
-        userIconUrl: item.pictureUrl,
+        userIconUrl: item.avatar,
         ifFollowing: item.isSubscribed,
         ifShowFollow: true
       });

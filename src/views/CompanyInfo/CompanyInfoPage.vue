@@ -114,8 +114,7 @@ import CompanyInfoCard from '@/components/CompanyInfoCard';
 import UserIcon from '@/components/UserIcon.vue';
 import { Connection } from '@element-plus/icons';
 import PageFooter from '@/components/PageFooter.vue';
-import { getEnterpriseInfo } from '@/apis/users.js'
-import { updateFollow, deleteFollow } from '@/apis/tweet.js';
+import {deleteFollow, getEnterpriseInfo, updateFollow} from '@/apis/users.js'
 import FansDialog from '@/components/FansDialog.vue';
 import FollowingDialog from '@/components/FollowingDialog.vue';
 
@@ -149,10 +148,10 @@ export default {
       unifiedId: companyData.unifiedId,
       userName: companyData.trueName || '匿名用户',
       briefInfo: companyData.briefInfo || '',
-      userIconUrl: companyData.pictureUrl,
+      userIconUrl: companyData.avatar,
       contactWay: companyData.contactWay,
       ifFollowing: companyData.isSubscribed,
-      backgroundUrl: companyData.background,
+      backgroundUrl: companyData.back,
       fansNum: companyData.fansNum,
       followingNum: companyData.followNum
     }
@@ -187,7 +186,7 @@ export default {
       }
       if(this.user.ifFollowing) { // 已关注
         const resp = await deleteFollow(params);
-        if (resp.status == 200 && resp.data.code == 'success') {
+        if (resp.status === 200 && resp.data.code === 200) {
           this.$message.success('取关成功!');
           this.user.ifFollowing = false;
         }
@@ -195,7 +194,7 @@ export default {
       }
       else { // 未关注
         const resp = await updateFollow(params);
-        if (resp.status == 200 && resp.data.code == 'success') {
+        if (resp.status === 200 && resp.data.code === 200) {
           this.$message.success('关注成功!');
           this.user.ifFollowing = true;
         }

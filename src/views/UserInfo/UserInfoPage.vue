@@ -102,8 +102,7 @@ import TopNav from '@/components/TopNav';
 import UserIcon from '@/components/UserIcon';
 import UserRecommendCard from '@/components/UserRecommendCard';
 import PageFooter from '@/components/PageFooter.vue';
-import { getUserInfo } from '@/apis/users.js';
-import { updateFollow, deleteFollow } from '@/apis/tweet.js';
+import {deleteFollow, getUserInfo, updateFollow} from '@/apis/users.js';
 import FansDialog from '@/components/FansDialog.vue';
 import FollowingDialog from '@/components/FollowingDialog.vue';
 
@@ -136,8 +135,8 @@ export default {
       briefInfo: userData.briefInfo || '',
       livePlace: userData.livePlace,
       ifFollowing: userData.isSubscribed,
-      userIconUrl: userData.pictureUrl,
-      backgroundUrl: userData.background,
+      userIconUrl: userData.avatar,
+      backgroundUrl: userData.back,
       fansNum: userData.fansNum,
       followingNum: userData.followNum
     }
@@ -172,7 +171,7 @@ export default {
       }
       if(this.user.ifFollowing) { // 已关注
         const resp = await deleteFollow(params);
-        if (resp.status == 200 && resp.data.code == 'success') {
+        if (resp.status === 200 && resp.data.code ===200) {
           this.$message.success('取关成功!');
           this.user.ifFollowing = false;
         }
@@ -180,7 +179,7 @@ export default {
       }
       else { // 未关注
         const resp = await updateFollow(params);
-        if (resp.status == 200 && resp.data.code == 'success') {
+        if (resp.status === 200 && resp.data.code ===200) {
           this.$message.success('关注成功!');
           this.user.ifFollowing = true;
         }

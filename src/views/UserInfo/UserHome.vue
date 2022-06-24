@@ -79,7 +79,7 @@ export default {
     const workExpData = resp2.data.data;
     for (let item of workExpData) {
       this.workExperienceList.push({
-        workExperienceId: item.numId,
+        workExperienceId: item.id,
         position: item.positionType,
         startTime: item.startTime,
         endTime: item.endTime,
@@ -93,7 +93,7 @@ export default {
     const eduExpData = resp3.data.data;
     for (let item of eduExpData) {
       this.educationExperienceList.push({
-        educationExperienceId: item.numId,
+        educationExperienceId: item.eduExperienceId,
         college: item.collegeName,
         major: item.major,
         degree: item.degree,

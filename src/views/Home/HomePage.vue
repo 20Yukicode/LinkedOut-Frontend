@@ -47,14 +47,17 @@ export default {
     }
   },
   mounted: async function(){
-    const uid = localStorage.getItem('unifiedId');
-    const resp = await getBasicInfo(uid);
+    const unifiedId = localStorage.getItem('unifiedId');
+    const data={
+      "unifiedId":unifiedId
+    }
+    const resp = await getBasicInfo(data);
     const userData = resp.data.data;
     
     this.user = {
       userName: userData.trueName,
       userBriefInfo: userData.briefInfo,
-      userIconUrl: userData.pictureUrl,
+      userIconUrl: userData.avatar,
       userType: userData.userType
     }
   }

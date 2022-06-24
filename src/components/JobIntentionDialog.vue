@@ -27,7 +27,7 @@
 <script>
 import _ from "lodash";
 import {updateUserInfo} from '@/apis/users.js';
-import { dialogWidth } from '@/utils/utils.js';
+import { dialogWidth,toFormData } from '@/utils/utils.js';
 
 export default {
   props: {
@@ -71,8 +71,10 @@ export default {
         unifiedId: localStorage.getItem("unifiedId"),
         prePosition: this.selectedJobs.join()
       };
-      const resp = await updateUserInfo(params);
-      if (resp.status == 200 && resp.data.code == 'success') this.$message.success('保存成功!');
+      //转成formData
+      const formData=toFormData(params)
+      const resp = await updateUserInfo(formData);
+      if (resp.status === 200 && resp.data.code === 200) this.$message.success('保存成功!');
       else this.$message.error('保存失败!');
       this.$emit('close');
     }

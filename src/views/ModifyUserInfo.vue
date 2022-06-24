@@ -183,7 +183,7 @@
               range-separator="至"
                start-placeholder="请选择开始时间"
                 end-placeholder="请选择结束时间"
-                value-format="YYYY年MM月">
+                value-format="YYYY-MM">
               </el-date-picker>
               </el-form-item>
         
@@ -230,7 +230,7 @@
               range-separator="至"
                start-placeholder="请选择开始时间"
                 end-placeholder="请选择结束时间"
-                value-format="YYYY年MM月">
+                value-format="YYYY-MM">
               </el-date-picker>
               </el-form-item>
 
@@ -249,8 +249,7 @@ import UserIcon from '@/components/UserIcon';
 import WorkExperience from '@/components/WorkExperience';
 import EducationExperience from '@/components/EducationExperience';
 import { 
-  getUserInfo, updateUserInfo, upLoadUserImage, upLoadUserBackground,
-  postResume, deleteResume, getResume,
+  getUserInfo, updateUserInfo,
   postEduBackground, deleteUserEduBackground, getUserEduBackground,
   postUserJobBackground, deleteUserJobBackground, getUserJobBackground,
   userSearch
@@ -258,6 +257,8 @@ import {
 import JobIntentionDialog from '@/components/JobIntentionDialog';
 import { DocumentAdd } from '@element-plus/icons';
 import PageFooter from '@/components/PageFooter';
+import {toFormData} from "@/utils/utils";
+import {deleteResume, getResume, postResume} from "@/apis/recruit";
 
 
 export default {
@@ -286,8 +287,8 @@ export default {
       trueName: data.trueName,
       briefInfo: data.briefInfo
     }
-    this.userIconUrl = data.pictureUrl;
-    this.backgroundUrl = data.background;
+    this.userIconUrl = data.avatar;
+    this.backgroundUrl = data.back;
 
     // 简历
     const resp2 = await getResume({ unifiedId: uid });
@@ -384,34 +385,40 @@ export default {
     uploadAvatar: async function(file) { // 上传头像
       let params = new FormData();
       params.append('unifiedId', this.userBasicData.unifiedId);
-      params.append('file', file.raw, file.name);
-      
-      const resp1 = await upLoadUserImage(params);
-      if (resp1.status == 200 && resp1.data.code == 'success') {
+      params.append('avatar', file.raw, file.name);
+
+      const resp1 = await updateUserInfo(params);
+      if (resp1.status === 200 && resp1.data.code ===200) {
         this.$message.success('上传成功!');
         const uid = localStorage.getItem('unifiedId');
         const resp2 = await getUserInfo({ uid: uid, sid: uid }); // 得到新头像url
-        this.userIconUrl = resp2.data.data.pictureUrl;
+        this.userIconUrl = resp2.data.data.avatar;
       }
       else this.$message.error('上传失败!');
     },
     uploadBackground: async function(file) { // 上传背景图
       let params = new FormData();
       params.append('unifiedId', this.userBasicData.unifiedId);
-      params.append('file', file.raw, file.name);
-      
-      const resp1 = await upLoadUserBackground(params);
-      if (resp1.status == 200 && resp1.data.code == 'success') {
+      params.append('back', file.raw, file.name);
+
+      const resp1 = await updateUserInfo(params);
+      if (resp1.status === 200 && resp1.data.code ===200) {
         this.$message.success('上传成功!');
         const uid = localStorage.getItem('unifiedId');
         const resp2 = await getUserInfo({ uid: uid, sid: uid }); // 得到新背景图url
-        this.backgroundUrl = resp2.data.data.background;
+        this.backgroundUrl = resp2.data.data.back;
       }
       else this.$message.error('上传失败!');
     },
     submitBasicInfo: async function() { // 提交基本信息
-      const resp = await updateUserInfo(this.userBasicData);
-      if (resp.status == 200 && resp.data.code == 'success') this.$message.success('保存成功!');
+      let formData=toFormData(this.userBasicData);
+      for(const value of formData) {
+        console.log(value)
+      }
+      const resp = await updateUserInfo(formData);
+      if (resp.status === 200 && resp.data.code === 200) {
+        this.$message.success('保存成功!');
+      }
       else this.$message.error('保存失败!');
     },
 
@@ -435,10 +442,11 @@ export default {
       params.append('file', file.raw, file.name);
 
       const resp1 = await postResume(params);
-      if (resp1.status == 200 && resp1.data.code == 'success') {
+      if (resp1.status === 200 && resp1.data.code ===200) {
         this.$message.success('上传成功!');
         const uid = localStorage.getItem('unifiedId');
         const resp2 = await getResume({ unifiedId: uid }); // 更新简历列表
+        console.log(resp2)
         this.resumeList = resp2.data.data || [];
       }
       else this.$message.error('上传失败!');
@@ -446,7 +454,7 @@ export default {
     deleteResume: async function(rId) {
       const uid = localStorage.getItem('unifiedId');
       const resp1 = await deleteResume({ unifiedId: uid, resumeId: rId});
-      if (resp1.status == 200 && resp1.data.code == 'success') {
+      if (resp1.status === 200 && resp1.data.code ===200) {
         this.$message.success('删除成功!');
         const uid = localStorage.getItem('unifiedId');
         const resp2 = await getResume({ unifiedId: uid }); // 更新简历列表
@@ -467,15 +475,15 @@ export default {
           degree: item.degree,
           startTime: item.startTime,
           endTime: item.endTime,
-          educationExperienceId: item.numId,
+          educationExperienceId: item.eduExperienceId,
           picUrl: item.pictureUrl
         });
       }
     },
     deleteEduExp: async function(nid) { // 删除教育经历
       const uid = localStorage.getItem('unifiedId');
-      const resp1 = await deleteUserEduBackground({ unifiedId: uid, numId: nid });
-      if (resp1.status == 200 && resp1.data.code == 'success') {
+      const resp1 = await deleteUserEduBackground({ unifiedId: uid, eduExperienceId: nid });
+      if (resp1.status === 200 && resp1.data.code ===200) {
         this.$message.success('删除成功!');
         this.updateEduExp();
       }
@@ -494,7 +502,7 @@ export default {
             major: this.educationForm.major
           };
           const resp = await postEduBackground(params);
-          if (resp.status == 200 && resp.data.code == 'success') {
+          if (resp.status === 200 && resp.data.code === 200) {
             this.$message.success('添加成功!');
             this.updateEduExp();
           }
@@ -518,15 +526,15 @@ export default {
           description: item.description,
           startTime: item.startTime,
           endTime: item.endTime,
-          workExperienceId: item.numId,
+          workExperienceId: item.id,
           picUrl: item.pictureUrl
         });
       }
     },
     deleteWorkExp: async function(nid) { // 删除工作经历
       const uid = localStorage.getItem('unifiedId');
-      const resp = await deleteUserJobBackground({ unifiedId: uid, numId: nid });
-      if (resp.status == 200 && resp.data.code == 'success') {
+      const resp = await deleteUserJobBackground({ unifiedId: uid, jobExperienceId: nid });
+      if (resp.status === 200 && resp.data.code === 200) {
         this.$message.success('删除成功!');
         this.updateWorkExp();
       }
@@ -544,8 +552,9 @@ export default {
             positionType: this.workForm.position,
             description: this.workForm.description
           };
+          console.log(params)
           const resp = await postUserJobBackground(params);
-          if (resp.status == 200 && resp.data.code == 'success') {
+          if (resp.status === 200 && resp.data.code ===200) {
             this.$message.success('添加成功!');
             this.updateWorkExp();
           }
@@ -562,11 +571,11 @@ export default {
     },
 
     searchCompany: async function(queryString, cb) {
-      const resp = await userSearch({ str: queryString });
+      const resp = await userSearch({ keyword: queryString });
       const dataList = resp.data.data;
       let result = [];
       for (let item of dataList) {
-        if (item.userType == 'company') {
+        if (item.userType === 'company') {
           result.push({ value: item.trueName });
         }
       }
@@ -575,11 +584,11 @@ export default {
 
     searchSchool: async function(queryString, cb) {
       console.log(queryString)
-      const resp = await userSearch({ str: queryString });
+      const resp = await userSearch({ keyword: queryString });
       const dataList = resp.data.data;
       let result = [];
       for (let item of dataList) {
-        if (item.userType == 'school') {
+        if (item.userType === 'school') {
           result.push({ value: item.trueName });
         }
       }

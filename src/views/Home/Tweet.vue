@@ -145,7 +145,7 @@ export default {
         else if (item.type == 'position') {
           this.tweetList.push({
             type: 'position',
-            recruitmentId: item.jobId,
+            recruitmentId: item.tweetId,
             unifiedId: item.simpleUserInfo.unifiedId,
             userName: item.simpleUserInfo.trueName,
             userType: item.simpleUserInfo.userType,
@@ -158,6 +158,7 @@ export default {
           });
         }
       }
+      console.log(this.tweetList)
       if (this.tweetList.length == 0) this.loadAll == true; // 相当于加载结束
       this.loadingInitialTweets = false;
     },

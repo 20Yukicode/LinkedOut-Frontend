@@ -31,10 +31,10 @@
       </el-carousel> -->
       <el-image
         v-if="pictureList.length != 0"
-        :preview-src-list="pictureList.map(i => i.pictureUrl)"
-        :src="pictureList[0].pictureUrl" 
-        style="width:100%;" 
-        fit="cover" 
+        :preview-src-list="pictureList"
+        :src="pictureList[0]"
+        style="width:100%;"
+        fit="cover"
       />
     </div>
     <div class="tweet-time">
@@ -239,8 +239,9 @@ export default {
         contents: this.myCommentText,
       }
 
+      console.log(params)
       const resp1 = await addComment(params);
-      if(resp1.status == 200 && resp1.data.code == 'success') {
+      if(resp1.status === 200 && resp1.data.code ===200) {
         this.myCommentText = '';
         this._commentNum++;
         this.getCommentList();
@@ -252,17 +253,21 @@ export default {
         unifiedId: localStorage.getItem('unifiedId'),
         tweetId: this.tweetId
       };
-      if(this._likeState == false) { // 点赞
+      if(this._likeState === false) { // 点赞
         this.likeDom.style.color = '#409eff';
         this._likeState = true;
         const resp = await addLikes(params);
-        this._likeNum = resp.data.data;
+        if(resp.status===200 && res.data.code===200){
+          this._likeNum++;
+        }
       }
       else { // 取赞
         this.likeDom.style.color = '';
         this._likeState = false;
         const resp = await deleteLikes(params);
-        this._likeNum = resp.data.data;
+        if(resp.status===200 && res.data.code===200){
+          this._likeNum--;
+        }
       }
     },
     getCommentList: async function(){
@@ -282,7 +287,7 @@ export default {
           },
           contents: item.contents,
           recordTime: item.recordTime,
-          floor: item.floor,
+          floor: item.commentId,
           ifSelf: item.simpleUserInfo.unifiedId == myUnifiedId
         })
       }
@@ -314,9 +319,9 @@ export default {
       const resp = await deleteComment({
         unifiedId: localStorage.getItem('unifiedId'),
         tweetId: this.tweetId,
-        floor: item.floor
+        commentId: item.floor
       });
-      if(resp.status == 200 && resp.data.code == 'success'){
+      if(resp.status === 200 && resp.data.code ===200){
         this._commentNum--;
         this.getCommentList();
         this.$message.success('删除成功');
@@ -332,7 +337,7 @@ export default {
       params.append('recordTime', trueDate);
 
       const resq = await addTweet(params);
-      if (resq.status == 200 && resq.data.code == 'success') {
+      if (resq.status === 200 && resq.data.code ===200) {
         this.$message.success('分享成功!');
         this.$emit('updateTweets');
       }
@@ -348,8 +353,10 @@ export default {
           type: 'warning',
         }
       ).then(async () => {
-        const resp = await deleteTweet(this.tweetId);
-        if (resp.status == 200 && resp.data.code == 'success') {
+        console.log("前置")
+        const resp = await deleteTweet({'tweetId':this.tweetId});
+        console.log(resp)
+        if (resp.status === 200 && resp.data.code ===200) {
           this.$message.success('删除成功!');
           this.$emit('updateTweets');
         }

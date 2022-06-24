@@ -110,8 +110,14 @@ import '@/assets/vditor.css';
 import AMapLoader from '@amap/amap-jsapi-loader';
 import { LocationInformation } from '@element-plus/icons';
 import PageFooter from '@/components/PageFooter';
-import { getPositionDetails, getAllApplicants, postPositionApplication, deletePositionApplication } from '@/apis/recruit.js';
-import { getBasicInfo, getResume } from '@/apis/users.js';
+import {
+  getPositionDetails,
+  getAllApplicants,
+  postPositionApplication,
+  deletePositionApplication,
+  getResume
+} from '@/apis/recruit.js';
+import {getBasicInfo} from '@/apis/users.js';
 import { ElMessageBox } from 'element-plus';
 import { dialogWidth } from '@/utils/utils.js';
 
@@ -130,29 +136,33 @@ export default {
 
     // 得到职位详情
     const resp1 = await getPositionDetails({ unifiedId: uid, jobId: this.rid});
-    if(resp1.status != 200 || resp1.data.code != 'success') {
+    if(resp1.status !== 200 || resp1.data.code !== 200) {
       this.$message.error('招聘职位不存在!');
       this.$router.go(-1);
       return;
     }
     const recruitment = resp1.data.data;
     // 设置职位详情信息
-    this.recruitmentTitle = recruitment.jobName;
-    this.salary = recruitment.reward;
-    this.limit = recruitment.limitation;
-    this.jobType = recruitment.positionType;
-    this.location = recruitment.workPlace;
-    this.detailedInfo = recruitment.description;
+    this.recruitmentTitle = recruitment.position.jobName;
+    this.salary = recruitment.position.reward;
+    this.limit = recruitment.position.limitation;
+    this.jobType = recruitment.position.positionType;
+    this.location = recruitment.position.workPlace;
+    this.detailedInfo = recruitment.position.description;
 
     // 得到职位发布者基础信息
-    const resp2 = await getBasicInfo(recruitment.unifiedId);
+    const dataUn= {
+      "unifiedId": recruitment.position.unifiedId
+    }
+
+    const resp2 = await getBasicInfo(dataUn);
     const companyData = resp2.data.data;
     // 设置职位发布者信息
     this.companyUser = {
       unifiedId: companyData.unifiedId,
       userName: companyData.trueName || "匿名用户",
       userType: companyData.userType,
-      userIconUrl: companyData.pictureUrl,
+      userIconUrl: companyData.avatar,
       userBriefInfo: companyData.briefInfo
     }
 
@@ -164,7 +174,7 @@ export default {
     }
 
     // 查看招聘详情的用户是其发布公司
-    if (recruitment.unifiedId == uid) {
+    if (recruitment.position.unifiedId == uid) {
       this.ifSelf = true;
       // 调用查看申请者接口
       const params = {
@@ -176,11 +186,11 @@ export default {
       // 设置申请人信息
       for (let item of candidatesData) {
         this.candidates.push({
-          unifiedId: item.unifiedId,
-          userName: item.trueName,
-          userType: item.userType,
-          userIconUrl: item.pictureUrl,
-          userBriefInfo: item.briefInfo,
+          unifiedId: item.userDto.unifiedId,
+          userName: item.userDto.trueName,
+          userType: item.userDto.userType,
+          userIconUrl: item.userDto.pictureUrl,
+          userBriefInfo: item.userDto.briefInfo,
           resume: item.resumeUrl
         });
       }
@@ -262,7 +272,7 @@ export default {
           resumeId: resumeId
         };
         const resp = await postPositionApplication(params);
-        if (resp.status == 200 && resp.data.code == 'success') {
+        if (resp.status === 200 && resp.data.code ===200) {
           this.$message.success('投递成功!');
           this.ifApplied = true;
         }
@@ -284,7 +294,7 @@ export default {
           jobId: this.rid,
         };
         const resp = await deletePositionApplication(params);
-        if (resp.status == 200 && resp.data.code == 'success') {
+        if (resp.status === 200 && resp.data.code === 200 ) {
           this.$message.success('撤销成功!');
           this.ifApplied = false;
         }

@@ -33,7 +33,7 @@
 
 <script>
 import UserIcon from './UserIcon.vue';
-import { updateFollow, deleteFollow } from '@/apis/tweet.js';
+import {deleteFollow, updateFollow} from "@/apis/users";
 
 
 export default {
@@ -100,7 +100,7 @@ export default {
         const params = { unifiedId: myUnifiedId, subscribeId: this.unifiedId }
         const resp = await deleteFollow(params);
 
-        if(resp.status === 200 && resp.data.code == 'success'){
+        if(resp.status === 200 && resp.data.code === 200){
           this.$message.success('取关成功!');
           this._ifFollowing = false;
         }
@@ -110,7 +110,7 @@ export default {
         const params = { unifiedId: myUnifiedId, subscribeId: this.unifiedId }
         const resp = await updateFollow(params);
 
-        if(resp.status === 200 && resp.data.code == 'success'){
+        if(resp.status === 200 && resp.data.code === 200){
           this.$message.success('关注成功!');
           this._ifFollowing = true;
         }

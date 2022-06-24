@@ -128,12 +128,14 @@ export default {
       params.append('unifiedId', localStorage.getItem("unifiedId"));
       params.append('content', this.tweetText);
       params.append('recordTime', trueDate);
+      // //这里做过改动
+      // params.append('files',this.fileList)
       for (let file of this.fileList) {
         params.append('files', file);
       }
       
       const resq = await addTweet(params);
-      if (resq.status == 200 && resq.data.code == 'success') {
+      if (resq.status === 200 && resq.data.code === 200) {
         this.$message.success('发布成功!');
         // 清空
         this.picList = [];

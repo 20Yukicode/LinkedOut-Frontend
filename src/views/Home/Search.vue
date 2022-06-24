@@ -68,14 +68,14 @@ export default {
       this.resultList = [];
       this.searching = true;
 
-      const resp = await userSearch({ str: this.searchKey });
+      const resp = await userSearch({keyword: this.searchKey });
       const dataList = resp.data.data;
       for (let item of dataList) {
         this.resultList.push({
           unifiedId: item.unifiedId,
           userName: item.trueName,
           userType: item.userType,
-          userIconUrl: item.pictureUrl,
+          userIconUrl: item.avatar,
           userBriefInfo: item.briefInfo
         })
       }

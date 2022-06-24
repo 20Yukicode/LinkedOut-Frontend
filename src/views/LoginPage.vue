@@ -69,13 +69,16 @@ export default {
 
       try {
         const resp1 = await userLogin(params);
-        if (resp1.status == 200 && resp1.data.code == 'success') {
+        if (resp1.status === 200 && resp1.data.code ===200) {
           this.$message.success('登陆成功!');
           const { unifiedId, userType } = resp1.data.data;
           localStorage.setItem("unifiedId",unifiedId);
           localStorage.setItem("userType",userType);
 
-          const resp2 = await getBasicInfo(unifiedId);
+          const dataUn={
+            "unifiedId":unifiedId
+          }
+          const resp2 = await getBasicInfo(dataUn);
           if (!resp2.data.data.trueName) { // 用户信息不完善, 跳转页面完善信息
             this.$message.info('请完善用户信息!');
             if (userType == 'user') this.$router.push({ name: 'modifyUserInfo' });
